@@ -1,0 +1,6 @@
+[package]
+name = "bag"
+version = "0.1.0"
+authors = ["thegreatchrispy <thegreatchrispy@users.noreply.github.com>"]
+
+[dependencies]
