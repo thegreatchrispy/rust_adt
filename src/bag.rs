@@ -22,27 +22,27 @@ pub struct Bag<f64> {
 // impl Clone for Bag<f64>
 
 // impl PartialEq for Bag<f64>
-// impl PartialEq for Bag<f64> {
-// 	fn eq(&self, comparand: &Bag<f64>) -> bool {
-// 		if self == &comparand { return true }
+impl PartialEq for Bag<f64> {
+	fn eq(&self, comparand: &Bag<f64>) -> bool {
+		if self == comparand { return true }
 
-// 		if self.used != comparand.used { return false; }
+		if self.used != comparand.used { return false; }
 
-// 		let mut index = 0;
-// 		let mut isEqual = true;
+		let mut index = 0;
+		let mut isEqual = true;
 
-// 		while isEqual && index < self.used {
-// 			if self.data[index as usize] != comparand.data[index as usize] {
-// 				isEqual = false;
-// 			}
-// 			else {
-// 				index += 1;
-// 			}
-// 		}
+		while isEqual && index < self.used {
+			if self.data[index as usize] != comparand.data[index as usize] {
+				isEqual = false;
+			}
+			else {
+				index += 1;
+			}
+		}
 
-// 		isEqual
-// 	}
-
+		isEqual
+	}
+}
 // 	fn ne(&self, comparand: &Bag<f64>) -> bool {
 // 		return !(*self == comparand)
 // 	}
