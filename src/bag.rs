@@ -309,7 +309,7 @@ impl Bag<f64> {
 		let mut index = 0;
 		let mut number_removed = 0;
 
-		while index < self.used {
+		while index < self.size() {
 			if self.data[index as usize] == target {
 				self.used -= 1;
 				self.data.remove(index as usize);

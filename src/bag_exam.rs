@@ -7,14 +7,6 @@ use bag::Bag;
 
 const MANY_TESTS: usize = 5;
 const POINTS: [i32; MANY_TESTS + 1] = [100, 32, 12, 12, 32, 12];
-const DESCRIPTION: &'static [&'static str] = &[
-	"tests for bag Class",
-    "Testing insert and the constant member functions",
-    "Testing the copy constructor and == methodr",
-    "Testing the assignment operator",
-    "Testing erase and erase_one functions",
-    "Testing += method and non-instance method +"
-];
 
 /// Determines if the `Bag` is correct based on the following requirements:
 /// 
