@@ -7,14 +7,6 @@ use bag::Bag;
 
 const MANY_TESTS: usize = 5;
 const POINTS: [i32; MANY_TESTS + 1] = [100, 32, 12, 12, 32, 12];
-const DESCRIPTION: &'static [&'static str] = &[
-	"tests for bag Class",
-    "Testing insert and the constant member functions",
-    "Testing the copy constructor and == methodr",
-    "Testing the assignment operator",
-    "Testing erase and erase_one functions",
-    "Testing += method and non-instance method +"
-];
 
 /// Determines if the `Bag` is correct based on the following requirements:
 /// 
@@ -35,7 +27,7 @@ fn correct(test: &Bag<f64>, n: u64) -> bool {
 pub fn test1() -> i32 {
 	const TEST_SIZE: u64 = 3000;
 	let mut test = Bag::<f64>::new();
-	let mut test_letter = 'A';
+	let test_letter = 'A';
 
 	println!("{}. Testing size for an empty bag.", test_letter);
 	if !correct(&test, 0) { return 0 }
@@ -105,7 +97,7 @@ pub fn test2() -> i32 {
 	let mut test = Bag::<f64>::new();
 
 	println!("A. Testing that copy constructor works okay for empty bag...");
-	let mut copy1 = Bag::<f64>::new_from_bag(&test);
+	let copy1 = Bag::<f64>::new_from_bag(&test);
 	if !correct(&copy1, 0) { return 0 }
 
 	println!("B. Testing copy constructor with 4-item bag...");
@@ -113,7 +105,7 @@ pub fn test2() -> i32 {
 	test.insert(1.0);
 	test.insert(1.0);
 	test.insert(1.0);
-	let mut copy2 = Bag::<f64>::new_from_bag(&test);
+	let copy2 = Bag::<f64>::new_from_bag(&test);
 	println!("\tand now testing the == method...");
 	if test != copy2 || copy2 != test {
 		println!("Test failed.\n");
@@ -140,8 +132,6 @@ pub fn test2() -> i32 {
 /// Performs some tests of the assignment opertator.
 pub fn test3() -> i32 {
 	let mut test = Bag::<f64>::new();
-	let mut old_bytes = Vec::<u8>::with_capacity(mem::size_of::<Bag<f64>>());
-	let mut new_bytes = Vec::<u8>::with_capacity(mem::size_of::<Bag<f64>>());
 
 	println!("A. Testing that assignment operator works okay for empty bag...");
 	let mut copy1 = Bag::<f64>::new_from_bag(&test);
@@ -154,7 +144,7 @@ pub fn test3() -> i32 {
 	test.insert(1.0);
 	test.insert(1.0);
 	test.insert(1.0);
-	let mut copy2 = Bag::<f64>::new_from_bag(&test);
+	let copy2 = Bag::<f64>::new_from_bag(&test);
 	test.insert(1.0);
 	println!("\taltering original by an insertion...");
 	if test.occurrences(1.0) != 5 || copy2.occurrences(1.0) != 4 {
@@ -170,18 +160,18 @@ pub fn test3() -> i32 {
 	// old_bytes.clone_from_slice(&test.get_data());
 	// test = test.clone();
 	// new_bytes.clone_from_slice(&test.get_data());
-	// for i in 0..mem::size_of::<Bag<f64>>() {
-	// 	if old_bytes[i] != new_bytes[i] {
-	// 		println!("Test failed.");
-	// 		return 0;
-	// 	}
-	// }
-
+	let test2 = test.clone();
+	if test2 != test {
+		println!("Test failed.");
+		return 0;
+	}
+	if test != test2 {
+		println!("Test failed.");
+		return 0;
+	}
 	println!("Test passed.");
-	drop(old_bytes);
-	drop(new_bytes);
 	
-	println!("Assignment operator seems okay.");
+	println!("Clone and equals method seems okay.");
 	POINTS[3]
 }
 
@@ -191,6 +181,143 @@ pub fn test3() -> i32 {
 /// 
 /// Performs some tests of the assignment opertator.
 pub fn test4() -> i32 {
+	let mut test = Bag::<f64>::new();
+
+	println!("Testing erase from empty bag (should have no effect) ...");
+	test.erase(0.0);
+	if !correct(&test, 0) { return 0 }
+
+	println!("Inserting these: 8 6 10 1 7 10 15 3 13 2 5 11 14 4 12");
+	test.insert( 8.0);
+	test.insert( 6.0);
+	test.insert(10.0);
+	test.insert( 1.0);
+	test.insert( 7.0);
+	test.insert(10.0);
+	test.insert(15.0);
+	test.insert( 3.0);
+	test.insert(13.0);
+	test.insert( 2.0);
+	test.insert( 5.0);
+	test.insert(11.0);
+	test.insert(14.0);
+	test.insert( 4.0);
+	test.insert(12.0);
+	if !correct(&test, 15) { return 0 }
+
+	println!("Now testing capacity -- should be 16");
+	if test.get_capacity() != 16 {
+		println!("Test failed.");
+		println!("{}", test);
+		return 0;
+	}
+	else {
+		println!("Test passed.");
+	}
+
+	println!("Erasing 0 (which is not in bag, so bag should be unchanged) ...");
+	if test.erase_one(0.0) {
+		println!("Test failed.");
+		return 0;
+	}
+	if !correct(&test, 15) { return 0 }
+
+	println!("Erasing the 6 ...");
+	test.erase(6.0);
+	if !correct(&test, 14) { return 0 }
+
+	println!("Erasing one 10 ...");
+	if !test.erase_one(10.0) {
+		println!("Test failed.");
+		return 0;
+	}
+	if !correct(&test, 13) { return 0 }
+
+	println!("Erasing the 1 ...");
+	test.erase(1.0);
+	if !correct(&test, 12) { return 0 }
+
+	println!("Erasing the 15 ...");
+	test.erase(15.0);
+	if !correct(&test, 11) { return 0 }
+
+	println!("Erasing the 5 ...");
+	test.erase(5.0);
+	if !correct(&test, 10) { return 0 }
+
+	println!("Erasing the 11 ...");
+	test.erase(11.0);
+	if !correct(&test, 9) { return 0 }
+
+	println!("Erasing the 3 ...");
+	test.erase(3.0);
+	if !correct(&test, 8) { return 0 }
+
+	println!("Erasing the 13 ...");
+	test.erase(13.0);
+	if !correct(&test, 7) { return 0 }
+
+	println!("Erasing the 2 ...");
+	test.erase(2.0);
+	if !correct(&test, 6) { return 0 }
+
+	println!("Erasing the 14 ...");
+	test.erase_one(14.0);
+	if !correct(&test, 5) { return 0 }
+
+	println!("Erasing the 4 ...");
+	test.erase(4.0);
+	if !correct(&test, 4) { return 0 }
+
+	println!("Erasing the 12 ...");
+	test.erase(12.0);
+	if !correct(&test, 3) { return 0 }
+
+	println!("Erasing the 8 ...");
+	test.erase(8.0);
+	if !correct(&test, 2) { return 0 }
+
+	println!("Erasing the 7 ...");
+	test.erase(7.0);
+	if !correct(&test, 1) { return 0 }
+
+	println!("Erasing the other 10 ...");
+	if !test.erase_one(10.0) {
+		println!("Test failed ...");
+		return 0;
+	}
+	if !correct(&test, 0) { return 0 }
+
+	println!("Testing capacity again ...");
+	if test.get_capacity() != 16 {
+		println!("Test failed.");
+		return 0;
+	}
+	println!("Test passed.");
+
+	println!("Now trimming to size");
+	test.trim_to_size();
+	if test.get_capacity() != 1 {
+		println!("Test failed.");
+		println!("{}", test);
+		return 0;
+	}
+	println!("Test passed.");
+
+	println!("Inserting value 5000 into the bag ...");
+	println!("Inserting three 5's into the bag and then erasing all of them ...");
+	test.insert(5000.0);
+	test.insert(5.0);
+	test.insert(5.0);
+	test.insert(5.0);
+	test.erase(5.0);
+	if !correct(&test, 1) { 
+		println!("{}", test);
+		return 0;
+	}
+
+	println!("Erase methods seem okay.");
+
 	POINTS[4]
 }
 
@@ -200,5 +327,40 @@ pub fn test4() -> i32 {
 /// 
 /// Performs some tests of the assignment opertator.
 pub fn test5() -> i32 {
+	let mut test1 = Bag::<f64>::new();
+	let mut test2 = Bag::<f64>::new();
+	let mut test3 = Bag::<f64>::new();
+	let mut test4 = Bag::<f64>::new();
+
+	println!("Inserting 2000 1's into test1 and 2000 2's into test2");
+	for i in 0..2000 {
+		test1.insert(1.0);
+		test2.insert(2.0);
+	}
+
+	println!("Now testing the AddAssign operation ...");
+	test3 = test2.clone();
+	test1 += test2;
+	println!("   and now testing for occurrences of 1's and 2's in test1");
+	if test1.occurrences(1.0) == 2000 && test1.occurrences(2.0) == 2000 {
+		println!("Test passed.");
+	}
+	else {
+		println!("Test failed.");
+		return 0;
+	}
+
+	println!("Now testing the Add operation ...");
+	test4 = test1 + test3;
+	println!("   and now testing for occurrences of 2's in test3 ...");
+	if test4.occurrences(2.0) == 4000 {
+		println!("Test passed.");
+	}
+	else {
+		println!("Test failed.");
+		return 0;
+	}
+
+	println!("AddAssign and Add operations seem okay.");
 	POINTS[5]
 }

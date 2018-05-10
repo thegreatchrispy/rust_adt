@@ -1,14 +1,109 @@
+use std::io;
+
 mod bag;
 mod bag_exam;
-use bag::Bag;
+
+const MANY_TESTS: usize = 5;
+const POINTS: [i32; MANY_TESTS + 1] = [100, 32, 12, 12, 32, 12];
+const DESCRIPTION: &'static [&'static str] = &[
+	"Tests for the Bag Class",
+    "Testing insert and the constant member functions",
+    "Testing the copy constructor and == methodr",
+    "Testing the assignment operator",
+    "Testing erase and erase_one functions",
+    "Testing += method and non-instance method +"
+];
+
+fn read_user_input_char() -> char {
+	let mut user_input = String::new();
+	
+	match io::stdin().read_line(&mut user_input) {
+		Ok(_) => {
+			match user_input.chars().next() {
+				Some(c) => { return c; }
+				None => { return '*'; }
+			}
+		}
+		Err(_) => { return '*';}
+	}
+}
+
+fn run_test(id: i32, message: String, max: i32) -> i32 {
+	let mut result = 0;
+
+	println!("START OF TEST {}:", id);
+	println!("{} ({} points).", message, max);
+	match id {
+		1 => result = bag_exam::test1(),
+		2 => result = bag_exam::test2(),
+		3 => result = bag_exam::test3(),
+		4 => result = bag_exam::test4(),
+		5 => result = bag_exam::test5(),
+		_ => println!("ERROR: Try again.")
+	}
+
+	if result > 0 {
+		println!("Test {} got {} points out of a possible {}.", id, result, max);
+	}
+	else {
+		println!("Test {} failed.", id);
+		println!("END OF TEST {}.\n", id);
+	}
+
+	result
+}
 
 fn main() {
-	let mut point_total = 0;
-	point_total += bag_exam::test1();
-	point_total += bag_exam::test2();
-	point_total += bag_exam::test3();
-	point_total += bag_exam::test4();
-	point_total += bag_exam::test5();
+	println!("Running {}", DESCRIPTION[0]);
 
-	println!("Total Points: {}", point_total);
+	println!("Enter 'a' for automatic tests.");
+	println!("Enter 'i' for interactive tests.");
+	println!("Enter choice: ");
+
+	let user_char = read_user_input_char();
+
+	if user_char == '*' {
+		println!("Enter an 'a' or 'i'.");
+	}
+	
+	if user_char == 'a' {
+		let mut point_total = 0;
+		point_total += run_test(1, DESCRIPTION[1].to_string(), POINTS[1]);
+		point_total += run_test(2, DESCRIPTION[2].to_string(), POINTS[2]);
+		point_total += run_test(3, DESCRIPTION[3].to_string(), POINTS[3]);
+		point_total += run_test(4, DESCRIPTION[4].to_string(), POINTS[4]);
+		point_total += run_test(5, DESCRIPTION[5].to_string(), POINTS[5]);
+
+		println!("If you submit your bag to Prof. Haiduk now, you will have");
+        println!("{} points out of the {} points from this test program.", point_total, POINTS[0]);
+	}
+
+	if user_char == 'i' {
+		println!("Not implemented yet.");
+	}
 }
+
+	// match io::stdin().read_line(&mut input) {
+	// 	Ok(_) => {
+	// 		if input == "a" { automatic() }
+	// 		else if input == "i" { interactive() }
+	// 		else { println!("Incorrect input.") }
+	// 	},
+	// 	Err(e) => {
+	// 		println!("Error! Something went wrong: {}", e);
+	// 	}
+	// 	// "inter" => interactive(),
+	// 	// "auto" => automatic(),
+	// 	// _ => println!("input: {}", input.as_str())
+	// }
+// }
+// fn main() {
+// 	let mut point_total = 0;
+// 	point_total += bag_exam::test1();
+// 	point_total += bag_exam::test2();
+// 	point_total += bag_exam::test3();
+// 	point_total += bag_exam::test4();
+// 	point_total += bag_exam::test5();
+
+// 	println!("Total Points: {}", point_total);
+// }
