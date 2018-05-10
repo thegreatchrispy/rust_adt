@@ -8,22 +8,22 @@
 use std::ops::{Add, AddAssign};
 use std::fmt;
 
-#[derive(Default, Debug, Hash)]
+#[derive(Default, Clone, Debug, Hash)]
 #[repr(C)]
-pub struct Bag<f64> {
-	data: Vec<f64>,
+pub struct Bag<T> {
+	data: Vec<T>,
 	capacity: u64,
 	used: u64,
 }
 
-// impl Drop for Bag<f64>
-// impl Deref for Bag<f64>
-// impl Copy for Bag<f64>
-// impl Clone for Bag<f64>
+// impl Drop for Bag<T>
+// impl Deref for Bag<T>
+// impl Copy for Bag<T>
+// impl Clone for Bag<T>
 
-// impl PartialEq for Bag<f64>
-// impl PartialEq for Bag<f64> {
-// 	fn eq(&self, comparand: &Bag<f64>) -> bool {
+// impl PartialEq for Bag<T>
+// impl PartialEq for Bag<T> {
+// 	fn eq(&self, comparand: &Bag<T>) -> bool {
 // 		if self == comparand { return true }
 
 // 		if self.used != comparand.used { return false; }
@@ -44,8 +44,8 @@ pub struct Bag<f64> {
 // 	}
 // }
 
-impl PartialEq for Bag<f64> {
-	fn eq(&self, comparand: &Bag<f64>) -> bool {
+impl<T: PartialEq> Bag<T> where T:Clone {
+	pub fn eq(&self, comparand: &Bag<T>) -> bool {
 		let mut is_equal = true;
 
 		if self.get_capacity() != comparand.get_capacity() { is_equal = false }
@@ -66,12 +66,12 @@ impl PartialEq for Bag<f64> {
 		is_equal
 	}
 
-	fn ne(&self, comparand: &Bag<f64>) -> bool {
-		return !(self == comparand)
+	pub fn ne(&self, comparand: &Bag<T>) -> bool {
+		return !(self.eq(comparand))
 	}
 }
 
-impl fmt::Display for Bag<f64> {
+impl<T: fmt::Display> Bag<T> where T:Clone + PartialEq {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		let mut str = "";
 		writeln!(f, "Bag");
@@ -90,21 +90,16 @@ impl fmt::Display for Bag<f64> {
 	}
 }
 
-impl Add for Bag<f64> {
-	type Output = Bag<f64>;
-
-	fn add(self, addend: Bag<f64>) -> Bag<f64> {
-		let mut new_bag = Bag::<f64>::new_with_capacity(self.get_capacity() + addend.get_capacity());
-		new_bag += self;
-		new_bag += addend;
-
-		new_bag
+impl<T: Clone> Bag<T> where T:PartialEq {
+	fn clone(&self) -> Bag<T> {
+		let bag = Bag::<T>::new_from_bag(&self);
+		bag
 	}
 }
 
-// impl AddAssign for Bag<f64>
-impl AddAssign for Bag<f64> {
-	fn add_assign(&mut self, mut addend: Bag<f64>) {
+// impl AddAssign for Bag<T>
+impl<T: AddAssign> Bag<T> where T:Clone + PartialEq {
+	fn add_assign(&mut self, mut addend: Bag<T>) {
 		let mut current_data = self.data.clone();
 		let current_used = self.size();
 
@@ -114,7 +109,7 @@ impl AddAssign for Bag<f64> {
 
 		current_data.append(&mut addend.data);
 
-		*self = Bag::<f64> {
+		*self = Bag::<T> {
 			data: current_data,
 			capacity: self.get_capacity() + addend.get_capacity(),
 			used: self.size() + addend.size(),
@@ -122,25 +117,28 @@ impl AddAssign for Bag<f64> {
 	}
 }
 
-impl Clone for Bag<f64> {
-	fn clone(&self) -> Bag<f64> {
-		let bag = Bag::<f64>::new_from_bag(&self);
-		bag
+impl<T: Add> Bag<T> where T:Clone + PartialEq + AddAssign {
+	fn add(self, addend: Bag<T>) -> Bag<T> {
+		let mut new_bag = Bag::<T>::new_with_capacity(self.get_capacity() + addend.get_capacity());
+		new_bag.add_assign(self);
+		new_bag.add_assign(addend);
+
+		new_bag
 	}
 }
 
-impl Bag<f64> {
+impl<T> Bag<T> where T:Clone + PartialEq {
 	/// Returns a new `Bag` with a capacity of 1 and no data elements being used.
 	/// 
 	/// # Examples
 	/// 
 	/// ```
-	/// let x: Bag<f64> = Bag::<f64>::new();
+	/// let x: Bag<T> = Bag::<T>::new();
 	/// assert_eq!(x.data.len(), 1);
 	/// assert_eq!(x.used, 0);
 	/// ```
-	pub fn new() -> Bag<f64> {
-		Bag::<f64> {
+	pub fn new() -> Bag<T> {
+		Bag::<T> {
 			data: Vec::with_capacity(1),
 			capacity: 1,
 			used: 0,
@@ -152,17 +150,17 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let x: Bag<f64> = Bag::<f64>::new_with_capacity(10);
+	/// let x: Bag<T> = Bag::<T>::new_with_capacity(10);
 	/// assert_eq!(x.data.len(), 0);
 	/// assert_eq!(x.used, 0);
 	/// ```
-	pub fn new_with_capacity(initial_capacity: u64) -> Bag<f64> {
+	pub fn new_with_capacity(initial_capacity: u64) -> Bag<T> {
 		if initial_capacity < 1 {
 			panic!("new_with_capacity() -> initial_capacity must be > 0");
 		}
 
 		// Needs to divide initial_capacity by 2 if memory is exceeded
-		Bag::<f64> {
+		Bag::<T> {
 			data: Vec::with_capacity(initial_capacity as usize),
 			capacity: initial_capacity,
 			used: 0,
@@ -175,17 +173,17 @@ impl Bag<f64> {
 	/// 
 	/// ```
 	/// // Create an original bag.
-	/// let mut x: Bag<f64> = Bag::<f64>::new_with_capacity(3);
+	/// let mut x: Bag<T> = Bag::<T>::new_with_capacity(3);
 	/// x.data.push(1.0);
 	/// x.data.push(2.0);
 	/// x.data.push(3.0);
 	/// 
 	/// // Create the new bag from the original bag.
-	/// let y: Bag<f64> = Bag::<f64>::new_from_bag(&x);
+	/// let y: Bag<T> = Bag::<T>::new_from_bag(&x);
 	/// assert_eq!(x.data.len(), y.data.len());
 	/// assert_eq!(x.used, y.used);
 	/// ```
-	pub fn new_from_bag(source: &Bag<f64>) -> Bag<f64> {
+	pub fn new_from_bag(source: &Bag<T>) -> Bag<T> {
 		// Needs to check if source is null
 		let mut dest = Vec::with_capacity(source.get_capacity() as usize);
 
@@ -193,14 +191,14 @@ impl Bag<f64> {
 			dest.push(source.data[i as usize]);
 		}
 
-		Bag::<f64> {
+		Bag::<T> {
 			data: dest.clone(),
 			capacity: source.get_capacity(),
 			used: source.size(),
 		}
 	}
 
-	pub fn get_data(&self) -> &Vec<f64> {
+	pub fn get_data(&self) -> &Vec<T> {
 		&self.data
 	}
 
@@ -209,7 +207,7 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let x: Bag<f64> = Bag::<f64>::new_with_capacity(1);
+	/// let x: Bag<T> = Bag::<T>::new_with_capacity(1);
 	/// x.insert(1.0);
 	/// x.insert(2.0);
 	/// assert_eq!(2, x.get_capacity());
@@ -223,7 +221,7 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let x: Bag<f64> = Bag::<f64>::new_with_capacity(5);
+	/// let x: Bag<T> = Bag::<T>::new_with_capacity(5);
 	/// x.insert(1.0);
 	/// x.insert(2.0);
 	/// assert_eq!(2, x.size());
@@ -238,12 +236,12 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let mut x: Bag<f64> = Bag::<f64>::new();
+	/// let mut x: Bag<T> = Bag::<T>::new();
 	/// x.insert(1.0);
 	/// x.insert(2.0);
 	/// assert_eq!(2, x.size());
 	/// ```
-	pub fn insert(&mut self, entry: f64) {
+	pub fn insert(&mut self, entry: T) {
 		let current_capacity = self.get_capacity();
 
 		if self.size() == current_capacity {
@@ -254,7 +252,7 @@ impl Bag<f64> {
 		self.used += 1;
 	}
 
-	pub fn occurrences(&self, target: f64) -> u64 {
+	pub fn occurrences(&self, target: T) -> u64 {
 		let mut answer = 0;
 
 		for i in 0..self.size() {
@@ -273,7 +271,7 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let mut x: Bag<f64> = Bag::<f64>::new();
+	/// let mut x: Bag<T> = Bag::<T>::new();
 	/// x.insert(5.0);
 	/// x.ensureCapacity(x.get_capacity + 1);
 	/// ```
@@ -296,7 +294,7 @@ impl Bag<f64> {
 	/// # Examples
 	/// 
 	/// ```
-	/// let mut x: Bag<f64> = Bag::<f64>::new();
+	/// let mut x: Bag<T> = Bag::<T>::new();
 	/// x.insert(1.0);
 	/// x.insert(1.0);
 	/// x.insert(1.0);
@@ -305,7 +303,7 @@ impl Bag<f64> {
 	/// assert_eq!(3, count);
 	/// assert_eq!(1, x.size());
 	/// ```
-	pub fn erase(&mut self, target: f64) -> u64 {
+	pub fn erase(&mut self, target: T) -> u64 {
 		let mut index = 0;
 		let mut number_removed = 0;
 
@@ -323,7 +321,7 @@ impl Bag<f64> {
 		number_removed
 	}
 
-	pub fn erase_one(&mut self, target: f64) -> bool {
+	pub fn erase_one(&mut self, target: T) -> bool {
 		let mut index = 0;
 		
 		while index < self.size() && self.data[index as usize].clone() != target {

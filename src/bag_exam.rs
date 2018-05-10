@@ -1,7 +1,6 @@
 extern crate rand;
 
 use std::char;
-use std::mem;
 use self::rand::distributions::{IndependentSample, Range};
 use bag::Bag;
 
@@ -107,7 +106,7 @@ pub fn test2() -> i32 {
 	test.insert(1.0);
 	let copy2 = Bag::<f64>::new_from_bag(&test);
 	println!("\tand now testing the == method...");
-	if test != copy2 || copy2 != test {
+	if test.ne(&copy2) || copy2.ne(&test) {
 		println!("Test failed.\n");
 		return 0;
 	}
