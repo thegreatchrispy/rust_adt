@@ -8,7 +8,7 @@
 use std::ops::{Add, AddAssign};
 use std::fmt;
 
-#[derive(Default, PartialEq, Eq, Debug, Hash)]
+#[derive(Default, Debug, Hash)]
 #[repr(C)]
 pub struct Bag<f64> {
 	data: Vec<f64>,
@@ -22,54 +22,54 @@ pub struct Bag<f64> {
 // impl Clone for Bag<f64>
 
 // impl PartialEq for Bag<f64>
-impl PartialEq for Bag<f64> {
-	fn eq(&self, comparand: &Bag<f64>) -> bool {
-		if self == comparand { return true }
-
-		if self.used != comparand.used { return false; }
-
-		let mut index = 0;
-		let mut isEqual = true;
-
-		while isEqual && index < self.used {
-			if self.data[index as usize] != comparand.data[index as usize] {
-				isEqual = false;
-			}
-			else {
-				index += 1;
-			}
-		}
-
-		isEqual
-	}
-}
-// 	fn ne(&self, comparand: &Bag<f64>) -> bool {
-// 		return !(*self == comparand)
-// 	}
-// }
-
 // impl PartialEq for Bag<f64> {
 // 	fn eq(&self, comparand: &Bag<f64>) -> bool {
-// 		let mut isEqual = true;
+// 		if self == comparand { return true }
 
-// 		if self.get_capacity() != comparand.get_capacity() { isEqual = false }
-
-// 		if self.size() != comparand.size() { isEqual = false }
+// 		if self.used != comparand.used { return false; }
 
 // 		let mut index = 0;
+// 		let mut is_equal = true;
 
-// 		while isEqual && index < self.size() {
+// 		while is_equal && index < self.used {
 // 			if self.data[index as usize] != comparand.data[index as usize] {
-// 				isEqual = false;
+// 				is_equal = false;
 // 			}
 // 			else {
 // 				index += 1;
 // 			}
 // 		}
 
-// 		isEqual
+// 		is_equal
 // 	}
 // }
+
+impl PartialEq for Bag<f64> {
+	fn eq(&self, comparand: &Bag<f64>) -> bool {
+		let mut is_equal = true;
+
+		if self.get_capacity() != comparand.get_capacity() { is_equal = false }
+
+		if self.size() != comparand.size() { is_equal = false }
+
+		let mut index = 0;
+
+		while is_equal && index < self.size() {
+			if self.data[index as usize] != comparand.data[index as usize] {
+				is_equal = false;
+			}
+			else {
+				index += 1;
+			}
+		}
+
+		is_equal
+	}
+
+	fn ne(&self, comparand: &Bag<f64>) -> bool {
+		return !(self == comparand)
+	}
+}
 
 impl fmt::Display for Bag<f64> {
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -93,7 +93,7 @@ impl fmt::Display for Bag<f64> {
 impl Add for Bag<f64> {
 	type Output = Bag<f64>;
 
-	fn add(self, mut addend: Bag<f64>) -> Bag<f64> {
+	fn add(self, addend: Bag<f64>) -> Bag<f64> {
 		let mut new_bag = Bag::<f64>::new_with_capacity(self.get_capacity() + addend.get_capacity());
 		new_bag += self;
 		new_bag += addend;
@@ -106,7 +106,7 @@ impl Add for Bag<f64> {
 impl AddAssign for Bag<f64> {
 	fn add_assign(&mut self, mut addend: Bag<f64>) {
 		let mut current_data = self.data.clone();
-		let mut current_used = self.size();
+		let current_used = self.size();
 
 		if self.size() + addend.size() > self.get_capacity() {
 			self.ensure_capacity(current_used + addend.size());
@@ -124,7 +124,7 @@ impl AddAssign for Bag<f64> {
 
 impl Clone for Bag<f64> {
 	fn clone(&self) -> Bag<f64> {
-		let mut bag = Bag::<f64>::new_from_bag(&self);
+		let bag = Bag::<f64>::new_from_bag(&self);
 		bag
 	}
 }
@@ -312,7 +312,7 @@ impl Bag<f64> {
 		while index < self.used {
 			if self.data[index as usize] == target {
 				self.used -= 1;
-				self.data[index as usize] = self.data[self.used as usize].clone();
+				self.data.remove(index as usize);
 				number_removed += 1;
 			}
 			else {
@@ -320,7 +320,7 @@ impl Bag<f64> {
 			}
 		}
 
-		return number_removed
+		number_removed
 	}
 
 	pub fn erase_one(&mut self, target: f64) -> bool {
@@ -333,7 +333,7 @@ impl Bag<f64> {
 		if index == self.size() { return false }
 
 		self.used -= 1;
-		self.data[index as usize] = self.data[self.used as usize];
+		self.data.remove(index as usize);
 		true
 	}
 
