@@ -1,0 +1,37 @@
+####################################
+## Bag Abstract Data Type in Rust ##
+####################################
+
+
+##################
+# File Structure #
+##################
+src
+  | bag.rs
+  | bag_exam.rs
+  | bag_test.rs
+  | main.rs
+.gitignore
+Cargo.lock
+Cargo.toml
+
+
+####################
+# Branch Structure #
+####################
+master -> fully updated
+f64 -> full version using f64
+generics -> abandoned generics branch
+f64_to_generics -> full version using generics
+
+
+#######################
+# Running the project #
+#######################
+After cloning the project, you should have a directory named "rust" in the directory you cloned into. 
+CD into the "rust" directory. 
+Run the command "cargo build"
+Then run the command "cargo run"
+You will then be prompted to either do the interactive testing, or the automatic testing.
+If you enter "a" for automatic, it will run through the suite of tests needed to test all of the bag's functions.
+If you enter "i" for interactive, it will run the interactive test allowing the user to enter commands interactively.
