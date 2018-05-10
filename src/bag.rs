@@ -16,35 +16,7 @@ pub struct Bag<T> {
 	used: u64,
 }
 
-// impl Drop for Bag<T>
-// impl Deref for Bag<T>
-// impl Copy for Bag<T>
-// impl Clone for Bag<T>
-
-// impl PartialEq for Bag<T>
-// impl PartialEq for Bag<T> {
-// 	fn eq(&self, comparand: &Bag<T>) -> bool {
-// 		if self == comparand { return true }
-
-// 		if self.used != comparand.used { return false; }
-
-// 		let mut index = 0;
-// 		let mut is_equal = true;
-
-// 		while is_equal && index < self.used {
-// 			if self.data[index as usize] != comparand.data[index as usize] {
-// 				is_equal = false;
-// 			}
-// 			else {
-// 				index += 1;
-// 			}
-// 		}
-
-// 		is_equal
-// 	}
-// }
-
-impl<T: PartialEq> Bag<T> where T:Clone {
+impl<T: PartialEq> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
 	pub fn eq(&self, comparand: &Bag<T>) -> bool {
 		let mut is_equal = true;
 
@@ -71,8 +43,8 @@ impl<T: PartialEq> Bag<T> where T:Clone {
 	}
 }
 
-impl<T: fmt::Display> Bag<T> where T:Clone + PartialEq {
-	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl<T: fmt::Display> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
+	pub fn fmt(self, f: &mut fmt::Formatter) -> fmt::Result {
 		let mut str = "";
 		writeln!(f, "Bag");
 		write!(f, "data: ");
@@ -90,16 +62,16 @@ impl<T: fmt::Display> Bag<T> where T:Clone + PartialEq {
 	}
 }
 
-impl<T: Clone> Bag<T> where T:PartialEq {
-	fn clone(&self) -> Bag<T> {
+impl<T: Clone> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
+	pub fn clone(&self) -> Bag<T> {
 		let bag = Bag::<T>::new_from_bag(&self);
 		bag
 	}
 }
 
 // impl AddAssign for Bag<T>
-impl<T: AddAssign> Bag<T> where T:Clone + PartialEq {
-	fn add_assign(&mut self, mut addend: Bag<T>) {
+impl<T: AddAssign> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
+	pub fn add_assign(&mut self, mut addend: Bag<T>) {
 		let mut current_data = self.data.clone();
 		let current_used = self.size();
 
@@ -117,8 +89,8 @@ impl<T: AddAssign> Bag<T> where T:Clone + PartialEq {
 	}
 }
 
-impl<T: Add> Bag<T> where T:Clone + PartialEq + AddAssign {
-	fn add(self, addend: Bag<T>) -> Bag<T> {
+impl<T: Add> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
+	pub fn add(self, addend: Bag<T>) -> Bag<T> {
 		let mut new_bag = Bag::<T>::new_with_capacity(self.get_capacity() + addend.get_capacity());
 		new_bag.add_assign(self);
 		new_bag.add_assign(addend);
@@ -127,7 +99,7 @@ impl<T: Add> Bag<T> where T:Clone + PartialEq + AddAssign {
 	}
 }
 
-impl<T> Bag<T> where T:Clone + PartialEq {
+impl<T> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
 	/// Returns a new `Bag` with a capacity of 1 and no data elements being used.
 	/// 
 	/// # Examples
@@ -186,9 +158,10 @@ impl<T> Bag<T> where T:Clone + PartialEq {
 	pub fn new_from_bag(source: &Bag<T>) -> Bag<T> {
 		// Needs to check if source is null
 		let mut dest = Vec::with_capacity(source.get_capacity() as usize);
+		let mut transfer = source.get_data();
 
 		for i in 0..source.size() {
-			dest.push(source.data[i as usize]);
+			dest.push(transfer[i as usize]);
 		}
 
 		Bag::<T> {

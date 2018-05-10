@@ -160,11 +160,11 @@ pub fn test3() -> i32 {
 	// test = test.clone();
 	// new_bytes.clone_from_slice(&test.get_data());
 	let test2 = test.clone();
-	if test2 != test {
+	if test2.ne(&test) {
 		println!("Test failed.");
 		return 0;
 	}
-	if test != test2 {
+	if test.ne(&test2) {
 		println!("Test failed.");
 		return 0;
 	}
@@ -207,7 +207,7 @@ pub fn test4() -> i32 {
 	println!("Now testing capacity -- should be 16");
 	if test.get_capacity() != 16 {
 		println!("Test failed.");
-		println!("{}", test);
+		// println!("{}", test);
 		return 0;
 	}
 	else {
@@ -298,7 +298,7 @@ pub fn test4() -> i32 {
 	test.trim_to_size();
 	if test.get_capacity() != 1 {
 		println!("Test failed.");
-		println!("{}", test);
+		// println!("{}", test);
 		return 0;
 	}
 	println!("Test passed.");
@@ -311,7 +311,7 @@ pub fn test4() -> i32 {
 	test.insert(5.0);
 	test.erase(5.0);
 	if !correct(&test, 1) { 
-		println!("{}", test);
+		// println!("{}", test);
 		return 0;
 	}
 
@@ -339,7 +339,7 @@ pub fn test5() -> i32 {
 
 	println!("Now testing the AddAssign operation ...");
 	test3 = test2.clone();
-	test1 += test2;
+	test1.add_assign(test2);
 	println!("   and now testing for occurrences of 1's and 2's in test1");
 	if test1.occurrences(1.0) == 2000 && test1.occurrences(2.0) == 2000 {
 		println!("Test passed.");
@@ -350,7 +350,7 @@ pub fn test5() -> i32 {
 	}
 
 	println!("Now testing the Add operation ...");
-	test4 = test1 + test3;
+	test4 = test1.add(test3);
 	println!("   and now testing for occurrences of 2's in test3 ...");
 	if test4.occurrences(2.0) == 4000 {
 		println!("Test passed.");
