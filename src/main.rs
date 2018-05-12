@@ -2,6 +2,7 @@ use std::io;
 
 mod bag;
 mod bag_exam;
+mod bag_test;
 
 const MANY_TESTS: usize = 5;
 const POINTS: [i32; MANY_TESTS + 1] = [100, 32, 12, 12, 32, 12];
@@ -31,7 +32,7 @@ fn read_user_input_char() -> char {
 fn run_test(id: i32, message: String, max: i32) -> i32 {
 	let mut result = 0;
 
-	println!("START OF TEST {}:", id);
+	println!("\n\nSTART OF TEST {}:", id);
 	println!("{} ({} points).", message, max);
 	match id {
 		1 => result = bag_exam::test1(),
@@ -43,11 +44,11 @@ fn run_test(id: i32, message: String, max: i32) -> i32 {
 	}
 
 	if result > 0 {
-		println!("Test {} got {} points out of a possible {}.", id, result, max);
+		println!("Test {} got {} points out of a possible {}.\n\n", id, result, max);
 	}
 	else {
 		println!("Test {} failed.", id);
-		println!("END OF TEST {}.\n", id);
+		println!("END OF TEST {}.\n\n", id);
 	}
 
 	result
@@ -79,31 +80,6 @@ fn main() {
 	}
 
 	if user_char == 'i' {
-		println!("Not implemented yet.");
+		bag_test::interactive_main();
 	}
 }
-
-	// match io::stdin().read_line(&mut input) {
-	// 	Ok(_) => {
-	// 		if input == "a" { automatic() }
-	// 		else if input == "i" { interactive() }
-	// 		else { println!("Incorrect input.") }
-	// 	},
-	// 	Err(e) => {
-	// 		println!("Error! Something went wrong: {}", e);
-	// 	}
-	// 	// "inter" => interactive(),
-	// 	// "auto" => automatic(),
-	// 	// _ => println!("input: {}", input.as_str())
-	// }
-// }
-// fn main() {
-// 	let mut point_total = 0;
-// 	point_total += bag_exam::test1();
-// 	point_total += bag_exam::test2();
-// 	point_total += bag_exam::test3();
-// 	point_total += bag_exam::test4();
-// 	point_total += bag_exam::test5();
-
-// 	println!("Total Points: {}", point_total);
-// }
