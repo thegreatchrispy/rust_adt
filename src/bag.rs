@@ -6,6 +6,7 @@
 ///   2. `capacity` is an integer that determines how much space is in the `data` vector.
 ///   3. `used` is an integer that determines how much of the bag's capacity is being used.
 use std::ops::{Add, AddAssign};
+use std::rc::{self, Rc};
 use std::fmt;
 
 #[derive(Default, Clone, Debug, Hash)]
@@ -157,15 +158,12 @@ impl<T> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
 	/// ```
 	pub fn new_from_bag(source: &Bag<T>) -> Bag<T> {
 		// Needs to check if source is null
-		let mut dest = Vec::with_capacity(source.get_capacity() as usize);
-		let mut transfer = source.get_data();
-
-		for i in 0..source.size() {
-			dest.push(transfer[i as usize]);
-		}
+		let mut dest = Vec::<T>::with_capacity(source.get_capacity() as usize);
+		let mut temp: Rc<&Vec<T>> = Rc::new(source.get_data());
+		let mut to_data = &**Rc::get_mut(&mut temp).unwrap();
 
 		Bag::<T> {
-			data: dest.clone(),
+			data: to_data.clone(),
 			capacity: source.get_capacity(),
 			used: source.size(),
 		}

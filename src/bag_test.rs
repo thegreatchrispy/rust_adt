@@ -72,10 +72,10 @@ pub fn interactive_main() {
 		choice = get_user_command();
 		match choice {
 			'A' => {
-				b1 = b2;
+				b1 = b2.clone();
 			}
 			'a' => {
-				b2 = b1;
+				b2 = b1.clone();
 			}
 			'C' => {
 				b1 = copybag(&b2);
