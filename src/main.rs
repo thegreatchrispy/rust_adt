@@ -1,3 +1,6 @@
+//! This is documentation for the `bag` crate.
+//!
+//! The bag crate is an abstract data type implementation for the bag data structure.
 use std::io;
 
 mod bag;
@@ -15,7 +18,7 @@ const DESCRIPTION: &'static [&'static str] = &[
     "Testing += method and non-instance method +"
 ];
 
-fn read_user_input_char() -> char {
+pub fn read_user_input_char() -> char {
 	let mut user_input = String::new();
 	
 	match io::stdin().read_line(&mut user_input) {
@@ -29,7 +32,7 @@ fn read_user_input_char() -> char {
 	}
 }
 
-fn run_test(id: i32, message: String, max: i32) -> i32 {
+pub fn run_test(id: i32, message: String, max: i32) -> i32 {
 	let mut result = 0;
 
 	println!("\n\nSTART OF TEST {}:", id);
@@ -54,7 +57,7 @@ fn run_test(id: i32, message: String, max: i32) -> i32 {
 	result
 }
 
-fn main() {
+pub fn main() {
 	println!("Running {}", DESCRIPTION[0]);
 
 	println!("Enter 'a' for automatic tests.");

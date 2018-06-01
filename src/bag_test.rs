@@ -50,8 +50,8 @@ pub fn get_number() -> f64 {
 }
 
 pub fn show_bags(b1: &Bag<f64>, b2: &Bag<f64>) {
-	// println!("\t\tb1 {}", b1);
-	// println!("\t\tb2 {}", b2);
+	println!("\t\tb1 {:?}", b1);
+	println!("\t\tb2 {:?}", b2);
 }
 
 pub fn copybag(b: &Bag<f64>) -> Bag<f64> {

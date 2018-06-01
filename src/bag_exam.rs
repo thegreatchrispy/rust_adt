@@ -10,7 +10,7 @@ const POINTS: [i32; MANY_TESTS + 1] = [100, 32, 12, 12, 32, 12];
 /// Determines if the `Bag` is correct based on the following requirements:
 /// 
 /// * it has exactly n items
-fn correct(test: &Bag<f64>, n: u64) -> bool {
+pub fn correct(test: &Bag<f64>, n: u64) -> bool {
 	let mut answer = true;
 
 	if test.size() != n { answer = false }
