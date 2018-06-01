@@ -1,10 +1,10 @@
-/// The `Bag` type.
-/// 
-/// An abstract data type that is represented by two basic structures.
-/// 
-///   1. `data` is a Vector of values.
-///   2. `capacity` is an integer that determines how much space is in the `data` vector.
-///   3. `used` is an integer that determines how much of the bag's capacity is being used.
+//! The `Bag` type.
+//! 
+//! An abstract data type that is represented by two basic structures.
+//! 
+//!   1. `data` is a Vector of values.
+//!   2. `capacity` is an integer that determines how much space is in the `data` vector.
+//!   3. `used` is an integer that determines how much of the bag's capacity is being used.
 use std::ops::{Add, AddAssign};
 use std::rc::{self, Rc};
 use std::fmt;
@@ -45,7 +45,7 @@ impl<T: PartialEq> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Dis
 }
 
 impl<T: fmt::Display> Bag<T> where T:Clone + PartialEq + Add + AddAssign + fmt::Display {
-	pub fn fmt(self, f: &mut fmt::Formatter) -> fmt::Result {
+	pub fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		let mut str = "";
 		writeln!(f, "Bag");
 		write!(f, "data: ");
